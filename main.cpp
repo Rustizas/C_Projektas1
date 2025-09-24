@@ -42,14 +42,16 @@ int main()
         int ndSk;
         cout << "\nIveskite studento varda ir pavarde: ";
         cin >> stud.vardas >> stud.pavarde;
-        cout << "Iveskite namu darbu skaiciu: ";
+        cout << "Iveskite namu darbu skaiciu: (jei tikslaus skaiciaus nezinote iveskite 0) ";
         cin >> ndSk;
-        cout << "Iveskite namu darbu rezultatus: ";
-        for (int i = 0; i < ndSk; i++)
+        cout << "Iveskite namu darbu rezultatus (iveskite 0 jei baigete): ";
+        for (int i = 0; ; i++)
         {
             int n;
             cin >> n;
+            if (n == 0) break;
             stud.namudarbai.push_back(n);
+            if (ndSk != 0 && i + 1 >= ndSk) break;
         }
         cout << "Iveskite egzamino rezultata: ";
         cin >> stud.egzaminas;
@@ -110,5 +112,10 @@ int main()
                  << setw(20) << fixed << setprecision(2) << studentaivisi[i].balasMed;
         cout << endl;
     }
+    for (int i = 0; i < studentaivisi.size(); i++) {
+    if (studentaivisi[i].balasVid > 10 || studentaivisi[i].balasMed > 10) {
+        cout << "Ar tikrai gerai ivedete duomenis studentui?????????? " << endl;
+    }
+}
     return 0;
 }
