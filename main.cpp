@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <iomanip>
+#include <random>
 using namespace std;
 
 struct Studentas
@@ -32,6 +33,10 @@ void bubbleSort(vector<int> &v)
 
 int main()
 {
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> dist(1, 10);
+
     int skaiciusstud;
     cout << "Iveskite studentu skaiciu: ";
     cin >> skaiciusstud;
@@ -40,21 +45,40 @@ int main()
     {
         Studentas stud;
         int ndSk;
+        int pasirinkimas;
         cout << "\nIveskite studento varda ir pavarde: ";
         cin >> stud.vardas >> stud.pavarde;
-        cout << "Iveskite namu darbu skaiciu: (jei tikslaus skaiciaus nezinote iveskite 0) ";
-        cin >> ndSk;
-        cout << "Iveskite namu darbu rezultatus (iveskite 0 jei baigete): ";
-        for (int i = 0; ; i++)
+        cout << "Ar norite ivesti pazymius pats (1), ar generuoti atsitiktinai (2)? ";
+        cin >> pasirinkimas;
+        if (pasirinkimas == 1)
         {
-            int n;
-            cin >> n;
-            if (n == 0) break;
-            stud.namudarbai.push_back(n);
-            if (ndSk != 0 && i + 1 >= ndSk) break;
+            cout << "Iveskite namu darbu skaiciu: (jei tikslaus skaiciaus nezinote iveskite 0) ";
+            cin >> ndSk;
+            cout << "Iveskite namu darbu rezultatus (iveskite 0 jei baigete): ";
+            for (int i = 0; ; i++)
+            {
+                int n;
+                cin >> n;
+                if (n == 0) break;
+                stud.namudarbai.push_back(n);
+                if (ndSk != 0 && i + 1 >= ndSk) break;
+            }
+            cout << "Iveskite egzamino rezultata: ";
+            cin >> stud.egzaminas;
         }
-        cout << "Iveskite egzamino rezultata: ";
-        cin >> stud.egzaminas;
+        else
+        {
+            cout << "Kiek namu darbu generuoti? ";
+            cin >> ndSk;
+            for (int i = 0; i < ndSk; i++)
+            {
+                stud.namudarbai.push_back(dist(gen));
+            }
+            stud.egzaminas = dist(gen);
+            cout << "Sugeneruoti namu darbu pazymiai: ";
+            for (int i = 0; i < stud.namudarbai.size(); i++) cout << stud.namudarbai[i] << " ";
+            cout << " Egzaminas: " << stud.egzaminas << endl;
+        }
         double sum = 0;
         for (int i = 0; i < stud.namudarbai.size(); i++)
         {
@@ -113,9 +137,9 @@ int main()
         cout << endl;
     }
     for (int i = 0; i < studentaivisi.size(); i++) {
-    if (studentaivisi[i].balasVid > 10 || studentaivisi[i].balasMed > 10) {
-        cout << "Ar tikrai gerai ivedete duomenis studentui?????????? " << endl;
+        if (studentaivisi[i].balasVid > 10 || studentaivisi[i].balasMed > 10) {
+            cout << "Ar tikrai gerai ivedete duomenis studentui?????????? " << endl;
+        }
     }
-}
     return 0;
 }
