@@ -10,55 +10,105 @@ struct Studentas
     string pavarde;
     vector<int> namudarbai;
     int egzaminas;
-    double balas;
+    double balasVid;
+    double balasMed;
 };
+
+void bubbleSort(vector<int> &v)
+{
+    for (int i = 0; i < v.size() - 1; i++)
+    {
+        for (int j = 0; j < v.size() - i - 1; j++)
+        {
+            if (v[j] > v[j + 1])
+            {
+                int temp = v[j];
+                v[j] = v[j + 1];
+                v[j + 1] = temp;
+            }
+        }
+    }
+}
 
 int main()
 {
     int skaiciusstud;
-    cout << "Iveskite studentu skaiciu" << endl;
+    cout << "Iveskite studentu skaiciu: ";
     cin >> skaiciusstud;
     vector<Studentas> studentaivisi;
-    Studentas stud;
     for (int j = 0; j < skaiciusstud; j++)
     {
+        Studentas stud;
         int ndSk;
-        cout << "Iveskite studento varda ir pavarde";
+        cout << "\nIveskite studento varda ir pavarde: ";
         cin >> stud.vardas >> stud.pavarde;
-        cout << "Iveskite namu darbu skaiciu";
+        cout << "Iveskite namu darbu skaiciu: ";
         cin >> ndSk;
-        cout << "Iveskite namu darbu rezultatus";
+        cout << "Iveskite namu darbu rezultatus: ";
         for (int i = 0; i < ndSk; i++)
         {
             int n;
             cin >> n;
             stud.namudarbai.push_back(n);
         }
-        cout << "Iveskite egzamino rezultata" << endl;
+        cout << "Iveskite egzamino rezultata: ";
         cin >> stud.egzaminas;
-
         double sum = 0;
-        for (int i = 0; i < stud.namudarbai.size(); i++) {
+        for (int i = 0; i < stud.namudarbai.size(); i++)
+        {
             sum += stud.namudarbai[i];
-        }  
-        double vid = sum/stud.namudarbai.size();
-
-        stud.balas = 0.4 * vid + 0.6 * stud.egzaminas;
+        }
+        double vid = sum / stud.namudarbai.size();
+        stud.balasVid = 0.4 * vid + 0.6 * stud.egzaminas;
+        bubbleSort(stud.namudarbai);
+        double mediana;
+        int n = stud.namudarbai.size();
+        if (n % 2 == 1)
+        {
+            mediana = stud.namudarbai[n / 2];
+        }
+        else
+        {
+            mediana = (stud.namudarbai[n / 2 - 1] + stud.namudarbai[n / 2]) / 2.0;
+        }
+        stud.balasMed = 0.4 * mediana + 0.6 * stud.egzaminas;
         studentaivisi.push_back(stud);
     }
-        cout << left << setw(15) << "Pavarde"
-         << setw(15) << "Vardas"
-         << setw(15) << "Galutinis (Vid.)" << endl;
-
-    cout << string(45, '-') << endl;
-
+    int med;
+    cout << "Koki norite matyti rezultata" << endl;
+    cout << "1 - vidurki" << endl;
+    cout << "2 - mediana" << endl;
+    cout << "3 - abu" << endl;
+    cin >> med;
+    cout << "\n"
+         << left << setw(15) << "Pavarde"
+         << setw(15) << "Vardas";
+    if (med == 1)
+        cout << setw(20) << "Galutinis (Vid.)";
+    else if (med == 2)
+        cout << setw(20) << "Galutinis (Med.)";
+    else
+        cout << setw(20) << "Galutinis (Vid.)"
+             << setw(20) << "Galutinis (Med.)";
+    cout << endl;
+    if (med == 1)
+        cout << string(50, '-') << endl;
+    else if (med == 2)
+        cout << string(50, '-') << endl;
+    else
+        cout << string(70, '-') << endl;
     for (int i = 0; i < studentaivisi.size(); i++)
     {
         cout << left << setw(15) << studentaivisi[i].pavarde
-             << setw(15) << studentaivisi[i].vardas
-             << setw(15) << fixed << setprecision(2) << studentaivisi[i].balas
-             << endl;
+             << setw(15) << studentaivisi[i].vardas;
+        if (med == 1)
+            cout << setw(20) << fixed << setprecision(2) << studentaivisi[i].balasVid;
+        else if (med == 2)
+            cout << setw(20) << fixed << setprecision(2) << studentaivisi[i].balasMed;
+        else
+            cout << setw(20) << fixed << setprecision(2) << studentaivisi[i].balasVid
+                 << setw(20) << fixed << setprecision(2) << studentaivisi[i].balasMed;
+        cout << endl;
     }
-
     return 0;
 }
