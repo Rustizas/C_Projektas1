@@ -85,6 +85,52 @@ void generuotiVisusFailus()
     }
 }
 
+void padalintiStudentus(const vector<Studentas>& visi)
+{
+    vector<Studentas> vargsiukai;
+    vector<Studentas> kietiakiai; // sukuriam vektorius
+
+    // Padalinam studentus i dvi grupes
+     for (int i = 0; i < visi.size(); i++)
+    {
+        double galutinis = visi[i].balasVid; 
+        if (galutinis < 5.0)
+            vargsiukai.push_back(visi[i]);
+        else
+            kietiakiai.push_back(visi[i]);
+    }
+
+    // Isvedame vargsiukus
+    ofstream os("vargsiukai.txt");
+    os << left << setw(15) << "Pavarde"
+       << setw(15) << "Vardas"
+       << setw(20) << "Galutinis (Vid.)" << endl;
+    os << string(50, '-') << endl;
+
+   for (int i = 0; i < vargsiukai.size(); i++)
+    {
+        os << left << setw(15) << vargsiukai[i].pavarde
+           << setw(15) << vargsiukai[i].vardas
+           << setw(20) << fixed << setprecision(2) << vargsiukai[i].balasVid << endl;
+    }
+    os.close(); // uzdarom faila
+    os.open("kietiakiai.txt"); 
+    os << left << setw(15) << "Pavarde"
+       << setw(15) << "Vardas"
+       << setw(20) << "Galutinis (Vid.)" << endl;
+    os << string(50, '-') << endl;
+
+     for (int i = 0; i < kietiakiai.size(); i++)
+    {
+        os << left << setw(15) << kietiakiai[i].pavarde
+           << setw(15) << kietiakiai[i].vardas
+           << setw(20) << fixed << setprecision(2) << kietiakiai[i].balasVid << endl;
+    }
+    os.close();
+    cout << "Failai sukurti" << endl;
+}
+
+
 int main()
 {
     random_device rd; // generuojam random seed gauti atsitiktinius ir skirtingus duomenis
@@ -227,7 +273,6 @@ int main()
                   << setw(20) << fixed << setprecision(2) << studentaivisi[i].balasMed;
         cout << endl;
     }
-
+    padalintiStudentus(studentaivisi);
     return 0;
 }
-
