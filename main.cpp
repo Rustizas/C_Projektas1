@@ -20,14 +20,84 @@ int main()
     cout << "Pasirinkite duomenu ivedimo buda:" << endl;
     cout << "1 - ivedimas ranka" << endl;
     cout << "2 - nuskaitymas is failo" << endl;
-    cout << "3 - sugeneruoti 5 failus skirtingu dydziu" << endl;
+    cout << "3 - sugeneruoti 5 failus skirtingu dydziu ir atlikti testavima" << endl;
     cin >> pasirinkimas;
 
     if (pasirinkimas == 3)
     {
-        generuotiVisusFailus();
+        vector<int> dydziai;
+        dydziai.push_back(1000);
+        dydziai.push_back(10000);
+        dydziai.push_back(100000);
+        dydziai.push_back(1000000);
+        dydziai.push_back(10000000);
+
+        for (int i = 0; i < dydziai.size(); i++)
+        {
+            int dydis = dydziai[i];
+            string failoVardas = "studentai_" + to_string(dydis) + ".txt";
+            cout << endl;
+            cout << "Failas uzdarytas" << endl;
+            generuotiFaila(failoVardas, dydis);
+
+            chrono::high_resolution_clock::time_point startViso = chrono::high_resolution_clock::now();
+            chrono::high_resolution_clock::time_point startNuskaitymas = chrono::high_resolution_clock::now(); // pradedam matuoti laika  
+
+            ifstream in(failoVardas);
+            string eilute;
+            getline(in, eilute); 
+            int stulpeliai = 0;
+            string zodis;
+            stringstream p(eilute);
+            while (p >> zodis) stulpeliai++;
+            int ndSk = stulpeliai - 3;
+
+            vector<Studentas> studentaivisi;
+            while (true)
+            {
+                Studentas stud;
+                if (!(in >> stud.vardas >> stud.pavarde)) break; // tikrinam ar pavyko nuskaityti faila
+                stud.namudarbai.clear();
+                for (int j = 0; j < ndSk; j++)
+                {
+                    int paz;
+                    in >> paz;
+                    stud.namudarbai.push_back(paz);
+                }
+                in >> stud.egzaminas;
+                double sum = 0;
+                for (int j = 0; j < stud.namudarbai.size(); j++) sum += stud.namudarbai[j]; // sudedam namu darbu pazymius 
+                double vid = sum / stud.namudarbai.size(); //suskaiciuojam vidurki
+                stud.balasVid = 0.4 * vid + 0.6 * stud.egzaminas;
+                bubbleSort(stud.namudarbai);
+                double mediana;
+                int n = stud.namudarbai.size();
+                if (n % 2 == 1) mediana = stud.namudarbai[n / 2];
+                else mediana = (stud.namudarbai[n / 2 - 1] + stud.namudarbai[n / 2]) / 2.0;
+                stud.balasMed = 0.4 * mediana + 0.6 * stud.egzaminas;
+                studentaivisi.push_back(stud);
+            }
+            in.close();
+
+            chrono::high_resolution_clock::time_point endNuskaitymas = chrono::high_resolution_clock::now();
+            chrono::duration<double> trukmeNuskaitymas = endNuskaitymas - startNuskaitymas; // nustojam skaiciuot laika ir suskaiciuojam skirtuma
+
+            cout << "Failo is " << dydis << " irasu nuskaitymo laikas: " << fixed << setprecision(6) << trukmeNuskaitymas.count() << " s" << endl;
+
+            chrono::high_resolution_clock::time_point startDalijimas = chrono::high_resolution_clock::now();
+            padalintiStudentus(studentaivisi);
+            chrono::high_resolution_clock::time_point endDalijimas = chrono::high_resolution_clock::now();
+            chrono::duration<double> trukmeDalijimas = endDalijimas - startDalijimas;
+
+            chrono::high_resolution_clock::time_point endViso = chrono::high_resolution_clock::now();
+            chrono::duration<double> trukmeViso = endViso - startViso;
+
+            cout << dydis << " studentu padalijimo is viso laikas: " << fixed << setprecision(6) << trukmeViso.count() << " s" << endl;
+            cout << endl;
+        }
         return 0;
     }
+
     if (pasirinkimas == 1)
     {
         int skaiciusstud;
@@ -88,70 +158,54 @@ int main()
         }
     }
     else if (pasirinkimas == 2)
-{
-    string Pav;
-    cout << "Iveskite failo pavadinima: " << endl;
-    cin >> Pav;
-    ifstream in(Pav);
-    string eilute;
-    getline(in, eilute); 
-    int stulpeliai = 0;
-    string zodis;
-    stringstream p(eilute);
-    while (p >> zodis) stulpeliai++;
-    int ndSk = stulpeliai - 3;
-    while (true)
     {
-        Studentas stud;
-        if (!(in >> stud.vardas >> stud.pavarde)) break; // tikrinam ar pavyko nuskaityti faila
-        stud.namudarbai.clear();
-        for (int i = 0; i < ndSk; i++)
+        string Pav;
+        cout << "Iveskite failo pavadinima: " << endl;
+        cin >> Pav;
+        chrono::high_resolution_clock::time_point startViso = chrono::high_resolution_clock::now();
+        chrono::high_resolution_clock::time_point startNuskaitymas = chrono::high_resolution_clock::now(); // pradedam matuoti laika  
+        ifstream in(Pav);
+        string eilute;
+        getline(in, eilute); 
+        int stulpeliai = 0;
+        string zodis;
+        stringstream p(eilute);
+        while (p >> zodis) stulpeliai++;
+        int ndSk = stulpeliai - 3;
+        while (true)
         {
-            int paz;
-            in >> paz;
-            stud.namudarbai.push_back(paz);
+            Studentas stud;
+            if (!(in >> stud.vardas >> stud.pavarde)) break; // tikrinam ar pavyko nuskaityti faila
+            stud.namudarbai.clear();
+            for (int i = 0; i < ndSk; i++)
+            {
+                int paz;
+                in >> paz;
+                stud.namudarbai.push_back(paz);
+            }
+            in >> stud.egzaminas;
+            double sum = 0;
+            for (int i = 0; i < stud.namudarbai.size(); i++) sum += stud.namudarbai[i]; // sudedam namu darbu pazymius 
+            double vid = sum / stud.namudarbai.size(); //suskaiciuojam vidurki
+            stud.balasVid = 0.4 * vid + 0.6 * stud.egzaminas;
+            bubbleSort(stud.namudarbai);
+            double mediana;
+            int n = stud.namudarbai.size();
+            if (n % 2 == 1) mediana = stud.namudarbai[n / 2];
+            else mediana = (stud.namudarbai[n / 2 - 1] + stud.namudarbai[n / 2]) / 2.0;
+            stud.balasMed = 0.4 * mediana + 0.6 * stud.egzaminas;
+            studentaivisi.push_back(stud);
         }
-        in >> stud.egzaminas;
-        double sum = 0;
-        for (int i = 0; i < stud.namudarbai.size(); i++) sum += stud.namudarbai[i]; // sudedam namu darbu pazymius 
-        double vid = sum / stud.namudarbai.size(); //suskaiciuojam vidurki
-        stud.balasVid = 0.4 * vid + 0.6 * stud.egzaminas;
-        bubbleSort(stud.namudarbai);
-        double mediana;
-        int n = stud.namudarbai.size();
-        if (n % 2 == 1) mediana = stud.namudarbai[n / 2];
-        else mediana = (stud.namudarbai[n / 2 - 1] + stud.namudarbai[n / 2]) / 2.0;
-        stud.balasMed = 0.4 * mediana + 0.6 * stud.egzaminas;
-        studentaivisi.push_back(stud);
-    }
-    in.close();
-}
-    int med;
-    cout << "Koki norite matyti rezultata" << endl;
-    cout << "1 - vidurki" << endl;
-    cout << "2 - mediana" << endl;
-    cout << "3 - abu" << endl;
-    cin >> med;
+        in.close();
+        chrono::high_resolution_clock::time_point endNuskaitymas = chrono::high_resolution_clock::now();
+        chrono::duration<double> trukmeNuskaitymas = endNuskaitymas - startNuskaitymas; // nustojam skaiciuot laika ir suskaiciuojam skirtuma
 
-    cout << "\n" << left << setw(15) << "Pavarde"
-         << setw(15) << "Vardas";
-    if (med == 1) cout << setw(20) << "Galutinis (Vid.)";
-    else if (med == 2) cout << setw(20) << "Galutinis (Med.)";
-    else cout << setw(20) << "Galutinis (Vid.)" << setw(20) << "Galutinis (Med.)";
-    cout << endl;
-    if (med == 3) cout << string(70, '-') << endl;
-    else cout << string(50, '-') << endl;
+        cout << "Failo is " << studentaivisi.size() << " irasu nuskaitymo laikas: " << fixed << setprecision(6) << trukmeNuskaitymas.count() << " s" << endl;
 
-    for (int i = 0; i < studentaivisi.size(); i++)
-    {
-        cout << left << setw(15) << studentaivisi[i].pavarde
-             << setw(15) << studentaivisi[i].vardas;
-        if (med == 1) cout << setw(20) << fixed << setprecision(2) << studentaivisi[i].balasVid;
-        else if (med == 2) cout << setw(20) << fixed << setprecision(2) << studentaivisi[i].balasMed;
-        else cout << setw(20) << fixed << setprecision(2) << studentaivisi[i].balasVid
-                  << setw(20) << fixed << setprecision(2) << studentaivisi[i].balasMed;
-        cout << endl;
+        padalintiStudentus(studentaivisi);
+        chrono::high_resolution_clock::time_point endViso = chrono::high_resolution_clock::now();
+        chrono::duration<double> trukmeViso = endViso - startViso;
+        cout << studentaivisi.size() << " irasu testo laikas: " << fixed << setprecision(6) << trukmeViso.count() << " s" << endl;
     }
-    padalintiStudentus(studentaivisi);
     return 0;
 }

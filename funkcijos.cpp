@@ -64,12 +64,17 @@ void generuotiVisusFailus()
     {
         int dydis = dydziai[i];
         string failoVardas = "studentai_" + to_string(dydis) + ".txt";
-        generuotiFaila(failoVardas, dydis);
+        chrono::high_resolution_clock::time_point start = chrono::high_resolution_clock::now(); // pradedam laika
+        generuotiFaila(failoVardas, dydis); // generuojam faila
+        chrono::high_resolution_clock::time_point end = chrono::high_resolution_clock::now(); //baigiam laika
+        chrono::duration<double> trukme = end - start; // skaiciuojam skirtuma
+        cout << "Failo \"" << failoVardas << "\" kūrimas užtruko: "  << fixed << setprecision(3) << trukme.count() << " s" << endl; // spausdinam laika
     }
 }
 
 void padalintiStudentus(const vector<Studentas>& visi)
 {
+    chrono::high_resolution_clock::time_point startRusiavimas = chrono::high_resolution_clock::now(); // pradzia skaiciavimo
     vector<Studentas> vargsiukai;
     vector<Studentas> kietiakiai; // sukuriam vektorius
 
@@ -82,7 +87,11 @@ void padalintiStudentus(const vector<Studentas>& visi)
         else
             kietiakiai.push_back(visi[i]);
     }
-
+    chrono::high_resolution_clock::time_point endRusiavimas = chrono::high_resolution_clock::now();
+    chrono::duration<double> trukmeRusiavimas = endRusiavimas - startRusiavimas; // uztruktas laikas
+    cout << visi.size() << " irasu dalijimo i dvi grupes laikas: " << fixed << setprecision(6) << trukmeRusiavimas.count() << " s" << endl;
+    
+    chrono::high_resolution_clock::time_point startVargsiukai = chrono::high_resolution_clock::now();
     // Isvedame vargsiukus
     ofstream os("vargsiukai.txt");
     os << left << setw(15) << "Pavarde"
@@ -97,6 +106,12 @@ void padalintiStudentus(const vector<Studentas>& visi)
            << setw(20) << fixed << setprecision(2) << vargsiukai[i].balasVid << endl;
     }
     os.close(); // uzdarom faila
+    chrono::high_resolution_clock::time_point endVargsiukai = chrono::high_resolution_clock::now();
+    chrono::duration<double> trukmeVargsiukai = endVargsiukai - startVargsiukai;
+
+    cout << visi.size() << " irasu vargsiuku irasymo i faila laikas: " << fixed << setprecision(6) << trukmeVargsiukai.count() << " s" << endl;
+    chrono::high_resolution_clock::time_point startKietiakiai = chrono::high_resolution_clock::now();
+
     os.open("kietiakiai.txt"); 
     os << left << setw(15) << "Pavarde"
        << setw(15) << "Vardas"
@@ -110,5 +125,11 @@ void padalintiStudentus(const vector<Studentas>& visi)
            << setw(20) << fixed << setprecision(2) << kietiakiai[i].balasVid << endl;
     }
     os.close();
-    cout << "Failai sukurti" << endl;
+    chrono::high_resolution_clock::time_point endKietiakiai = chrono::high_resolution_clock::now();
+    chrono::duration<double> trukmeKietiakiai = endKietiakiai - startKietiakiai;
+
+    cout << visi.size() << " irasu kietiaku irasymo i faila laikas: " << fixed << setprecision(6) << trukmeKietiakiai.count() << " s" << endl;
+
+    chrono::duration<double> viso = trukmeRusiavimas + trukmeVargsiukai + trukmeKietiakiai;
+    cout << visi.size() << " irasu testo laikas: " << fixed << setprecision(6) << viso.count() << " s" << endl;
 }
