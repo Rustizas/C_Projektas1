@@ -7,17 +7,17 @@
 #include <sstream>
 using namespace std;
 
-struct Studentas
+struct Studentas //studento klases aprasymas
 {
     string vardas;
     string pavarde;
-    vector<int> namudarbai;
+    vector<int> namudarbai; // saugom kintamo ilgio sarasa
     int egzaminas;
     double balasVid;
     double balasMed;
 };
 
-void bubbleSort(vector<int> &v)
+void bubbleSort(vector<int> &v) //sortas
 {
     for (int i = 0; i < v.size() - 1; i++)
     {
@@ -32,39 +32,96 @@ void bubbleSort(vector<int> &v)
         }
     }
 }
+int randomPazymys(mt19937 &gen)
+{
+    uniform_int_distribution<> dist(1, 10);
+    return dist(gen);
+}
+
+void generuotiFaila(const string &failoVardas, int kiekis)
+{
+    ofstream out(failoVardas);
+    random_device rd;
+    mt19937 gen(rd());
+    int ndKiekis = 5; // namu darbu skaicius
+    out << left << setw(15) << "Vardas"
+        << setw(15) << "Pavarde";
+    for (int i = 1; i <= ndKiekis; i++) // sugeneruojam namu darbu stulpelius
+        out << setw(10) << ("ND" + to_string(i));
+    out << setw(10) << "Egzaminas" << endl;
+
+    for (int i = 1; i <= kiekis; i++)
+    {
+        out << left << setw(15) << ("Vardas" + to_string(i))
+            << setw(15) << ("Pavarde" + to_string(i));
+
+        for (int j = 0; j < ndKiekis; j++) // sugeneruojam random studentu pazymius
+        {
+            int paz = randomPazymys(gen);
+            out << setw(10) << paz;
+        }
+
+        int egz = randomPazymys(gen);
+        out << setw(10) << egz << endl; // surasom pazymio duomenis i faila
+    }
+    out.close();
+    cout << "Failas \"" << failoVardas << "\" sukurtas (" << kiekis << " įrašų)." << endl;
+}
+
+void generuotiVisusFailus()
+{
+    cout << "." << endl;
+    vector<int> dydziai;
+    dydziai.push_back(1000);
+    dydziai.push_back(10000);
+    dydziai.push_back(100000);
+    dydziai.push_back(1000000);
+    dydziai.push_back(10000000); // pridedam elementus i vektoriu
+   for (int i = 0; i < dydziai.size(); i++)
+    {
+        int dydis = dydziai[i];
+        string failoVardas = "studentai_" + to_string(dydis) + ".txt";
+        generuotiFaila(failoVardas, dydis);
+    }
+}
 
 int main()
 {
-    random_device rd;
-    mt19937 gen(rd());
-    uniform_int_distribution<> dist(1, 10);
-
+    random_device rd; // generuojam random seed gauti atsitiktinius ir skirtingus duomenis
+    mt19937 gen(rd()); // aprasom generatoriu
+    uniform_int_distribution<> dist(1, 10); // nustatom intervala
     vector<Studentas> studentaivisi;
     int pasirinkimas;
     cout << "Pasirinkite duomenu ivedimo buda:" << endl;
     cout << "1 - ivedimas ranka" << endl;
     cout << "2 - nuskaitymas is failo" << endl;
+    cout << "3 - sugeneruoti 5 failus skirtingu dydziu" << endl;
     cin >> pasirinkimas;
 
+    if (pasirinkimas == 3)
+    {
+        generuotiVisusFailus();
+        return 0;
+    }
     if (pasirinkimas == 1)
     {
         int skaiciusstud;
-        cout << "Iveskite studentu skaiciu: ";
+        cout << "Iveskite studentu skaiciu: " << endl;
         cin >> skaiciusstud;
         for (int j = 0; j < skaiciusstud; j++)
         {
             Studentas stud;
             int ndSk;
             int ivestis;
-            cout << "\nIveskite studento varda ir pavarde: ";
+            cout << "Iveskite studento varda ir pavarde: " << endl;
             cin >> stud.vardas >> stud.pavarde;
-            cout << "Ar norite ivesti pazymius pats (1), ar generuoti atsitiktinai (2)? ";
+            cout << "Ar norite ivesti pazymius pats (1), ar generuoti atsitiktinai (2)? " << endl;
             cin >> ivestis;
             if (ivestis == 1)
             {
-                cout << "Iveskite namu darbu skaiciu (0 jei nezinote): ";
+                cout << "Iveskite namu darbu skaiciu (0 jei nezinote): " << endl;
                 cin >> ndSk;
-                cout << "Iveskite namu darbu rezultatus (0 jei baigete): ";
+                cout << "Iveskite namu darbu rezultatus (0 jei baigete): " << endl;
                 for (int i = 0;; i++)
                 {
                     int n;
@@ -73,12 +130,12 @@ int main()
                     stud.namudarbai.push_back(n);
                     if (ndSk != 0 && i + 1 >= ndSk) break;
                 }
-                cout << "Iveskite egzamino rezultata: ";
+                cout << "Iveskite egzamino rezultata: " << endl;
                 cin >> stud.egzaminas;
             }
             else
             {
-                cout << "Kiek namu darbu generuoti? ";
+                cout << "Kiek namu darbu generuoti? " << endl;
                 cin >> ndSk;
                 for (int i = 0; i < ndSk; i++)
                 {
@@ -121,7 +178,7 @@ int main()
     while (true)
     {
         Studentas stud;
-        if (!(in >> stud.vardas >> stud.pavarde)) break;
+        if (!(in >> stud.vardas >> stud.pavarde)) break; // tikrinam ar pavyko nuskaityti faila
         stud.namudarbai.clear();
         for (int i = 0; i < ndSk; i++)
         {
@@ -131,8 +188,8 @@ int main()
         }
         in >> stud.egzaminas;
         double sum = 0;
-        for (int i = 0; i < stud.namudarbai.size(); i++) sum += stud.namudarbai[i];
-        double vid = sum / stud.namudarbai.size();
+        for (int i = 0; i < stud.namudarbai.size(); i++) sum += stud.namudarbai[i]; // sudedam namu darbu pazymius 
+        double vid = sum / stud.namudarbai.size(); //suskaiciuojam vidurki
         stud.balasVid = 0.4 * vid + 0.6 * stud.egzaminas;
         bubbleSort(stud.namudarbai);
         double mediana;
