@@ -11,7 +11,6 @@
 using namespace std;
 #include "studentas.h"
 
-// Pagalba: saugiai paimti paskutinio elemento adresą
 template<typename Container>
 const void* last_address(const Container& c) {
     auto it = c.end();
@@ -41,7 +40,6 @@ int main()
         return 0;
     }
 
-    // Pasirinkti konteinerį, kai reikia
     int kont = 1;
     if (pasirinkimas == 1 || pasirinkimas == 4) {
         cout << "Pasirinkite konteinerį: 1 - vector<Studentas>, 2 - list<Studentas>: ";
@@ -103,7 +101,6 @@ int main()
 
                 studentaivisi.push_back(stud);
 
-                // ⬇️ Reikalavimas: atspausdinti objekto adresą atmintyje (Vector atvejis)
                 cout << "Objekto adresas atmintyje: " << last_address(studentaivisi) << "\n";
             }
         } else {
@@ -155,7 +152,6 @@ int main()
 
                 studentaivisi.push_back(stud);
 
-                // ⬇️ Reikalavimas: atspausdinti objekto adresą atmintyje (List atvejis)
                 cout << "Objekto adresas atmintyje: " << last_address(studentaivisi) << "\n";
             }
         }
@@ -324,7 +320,6 @@ int main()
                     << tRead << "," << tSplit << "," << tWV_s << "," << tWK_s << "," << tTotal << "\n";
             }
 
-            // Averages
             auto avg = [](const vector<double>& v){
                 if (v.empty()) return 0.0;
                 double s=0; for (double x : v) s += x; return s / v.size();
