@@ -1,7 +1,7 @@
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -O2
 TARGET = studentai
-SOURCES = main.cpp studentas.cpp
+SOURCES = main.cpp funkcijos.cpp
 OBJECTS = $(SOURCES:.cpp=.o)
 
 all: $(TARGET)
