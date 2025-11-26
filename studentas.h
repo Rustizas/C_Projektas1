@@ -10,6 +10,7 @@
 #include <fstream>
 #include <sstream>
 #include <chrono>
+#include <algorithm>
 
 using namespace std;
 
@@ -28,10 +29,17 @@ int randomPazymys(mt19937 &gen);
 void generuotiFaila(const string &failoVardas, int kiekis);
 void generuotiVisusFailus();
 
-// grazinam trukme
-void padalintiStudentus(const vector<Studentas>& visi,
-                        double& tRusiavimas, double& tWriteVargs, double& tWriteKiet);
-void padalintiStudentus(const list<Studentas>& visi,
-                        double& tRusiavimas, double& tWriteVargs, double& tWriteKiet);
+void padalintiStudentus_strategija1(const vector<Studentas> &visi,
+                                    double &tRusiavimas, double &tWriteVargs, double &tWriteKiet);
+void padalintiStudentus_strategija1(const list<Studentas> &visi,
+                                    double &tRusiavimas, double &tWriteVargs, double &tWriteKiet);
+
+void padalintiStudentus_strategija2(vector<Studentas> &visi,
+                                    double &tRusiavimas, double &tWriteVargs, double &tWriteKiet);
+void padalintiStudentus_strategija2(list<Studentas> &visi,
+                                    double &tRusiavimas, double &tWriteVargs, double &tWriteKiet);
+
+void padalintiStudentus_strategija3(vector<Studentas> &visi,
+                                    double &tRusiavimas, double &tWriteVargs, double &tWriteKiet);
 
 #endif
